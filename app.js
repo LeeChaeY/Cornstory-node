@@ -148,6 +148,12 @@ const chatSchema = new mongoose.Schema({
 // Create the Chat model
 const Chat = mongoose.model('chat', chatSchema);
 
+const autoSequenceSchema = new mongoose.Schema({
+  seq: Number,
+});
+
+const AutoSequence = mongoose.model('auto_sequence', autoSequenceSchema);
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
@@ -227,13 +233,7 @@ app.post('/receive-post', async (req, res) => {
 
 
     socket.on("message", async (data) => {
-      const autoSequenceSchema = new mongoose.Schema({
-        seq: Number,
-      });
-    
-      const AutoSequence = mongoose.model('auto_sequence', autoSequenceSchema);
       let chatNo;
-    
       try {
         // Execute the query and wait for the result
         const result = await AutoSequence.findOneAndUpdate({}, { $inc: { seq: 1 } }, { new: true, upsert: true });
