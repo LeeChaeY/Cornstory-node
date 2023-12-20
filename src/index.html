@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="imagetoolbar" content="no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="title" content="웹사이트">
+  <meta name="description" content="웹사이트입니다.">
+  <meta name="keywords" content="키워드,키워드,키워드">
+  <meta property="og:title" content="웹사이트">
+  <meta property="og:description" content="웹사이트입니다">
+  <meta property="og:image" content="https://웹사이트/images/opengraph.png">
+  <meta property="og:url" content="https://웹사이트">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <title>enterChatSpace</title>
+  <link rel="stylesheet" href="static/ssh/css/style.css">
+  <link rel="stylesheet" href="static/ssh/css/plugin.css">
+  <link rel="stylesheet" href="static/ssh/css/template.css">
+  <link rel="stylesheet" href="static/ssh/css/common.css">
+  <link rel="stylesheet" href="static/ssh/css/style.css">
+
+  <link rel="stylesheet" href="static/lcy/css/style.css">
+
+
+  <script>
+    console.log(data);
+  </script>
+  <!-- [E]thwhole-wfLpW5Z3pJ -->
+</head>
+
+<body>
+    
+
+    <div class="slideMenu" class="slide">
+        <div class="closeSlideMenu">닫기</div>
+        <br><br>
+        <div>전체 {{ totalCount }} 명</div>
+        <table>
+            <tbody>
+            <tr>
+                <td width="50">No</td>
+                <td width="100">회원 사진</td>
+                <td width="200">회원 닉네임</td>
+                <td width="150">회원 입장시간</td>
+            </tr>
+            <c:set var="j" value="0"/>
+            <c:forEach var="chatSpace" items="${ userList }">
+                <c:set var="j" value="${j+1}"/>
+                <tr>
+                    <td>${j}</td>
+                    <td><img src="static/file/chat/${chatSpace.userImage}"></td>
+                    <td>
+                            ${chatSpace.nickname}
+                        <c:if test="${j == 1}">
+                        <개설자></c:if>
+                    </td>
+                    <td>${chatSpace.chatEnterDate}</td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </div>
+
+  <div class="wrapper">
+    <div class="user-container">
+        <table class="tableset-table table">
+            <tr>
+                <td>
+                    <img name="cSpaceImage" class="cSpaceImage" src="static/file/chat/${chatSpace.cSpaceImage}">
+                </td>
+                <td>
+                    ${chatSpace.cSpaceName}
+                </td>
+                <td>
+                    <img name="userImage" class="userImage" src="static/file/chat/${chatSpace.userImage}">
+                    ${chatSpace.nickname}
+                </td>
+                <td>
+                    ${chatSpace.genre}
+                </td>
+                <td>
+                    ${chatSpace.cSpaceUserCnt}
+                </td>
+                <td>
+                    ${chatSpace.cSpaceDate}
+                </td>
+                <td>
+                    <input type="button" class="slide-open" value="인원보기">
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <form name="form">
+        <div class="inputset inputset-line inputset-lg">
+            <button class="listStoreSearchButton inputset-icon icon-right icon-search btn"
+                    type="button" aria-label="아이콘"></button>
+            <input type="text" class="inputset-input form-control" name="searchKeyword"
+                    placeholder="채팅 내용을 입력해 주세요." aria-label="내용"
+                    value="${!empty search.searchKeyword ? search.searchKeyword:''}">
+        </div>
+        <input type="hidden" name="chatSpaceNo" class="chatSpaceNo" value="${chatSpace.chatSpaceNo}">
+    </form>
+
+
+    <div class="display-container">
+      <ul class="chatting-list">
+        <c:forEach var="chat" items="${ list }">
+            <li class="${sessionScope.user.userId == chat.userId ? 'sent:'received'}">
+                <input type="hidden" name="userId" value="${chat.userId}">
+                <input type="hidden" name="nickname" id="nickname" value="${chat.nickname}">
+                <span class="profile">
+                    <span class="user">${chat.nickname}</span>
+                    <img name="userImage" class="userImage" src="static/file/chat/${chat.userImage}">
+                </span>
+                <span class="chatContent">${chat.chatContent}</span>
+                <span class="chatDate">${chat.chatDate}</span>
+            </li>
+        </c:forEach>
+      </ul>
+    </div>
+    <div class="input-container">
+      <span>
+        <input type="hidden" name="sessionUserId" id="sessionUserId" value="${sessionScope.user.userId}">
+        <input type="hidden" name="nickname" id="nickname" value="${sessionScope.user.nickname}">
+        <input type="hidden" name="userImage" id="userImage" value="${sessionScope.user.userImage}">
+
+        <input name="chatContent" type="text" class="chatting-input">
+        <input type="button" class="send-button" value="전송">
+      </span>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="static/lcy/js/chat.js"></script>
+</body>
+</html>
