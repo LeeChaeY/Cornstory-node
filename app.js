@@ -45,7 +45,7 @@ app.post('/receive-post', (req, res) => {
 
 
 io.on("connection", (socket)=>{
-  socket.join();
+  // socket.join();
 
   socket.on("chatting", (data) => {
       const {userId, chatContent, nickname, userImage, chatSpaceNo} = data;
@@ -69,9 +69,9 @@ io.on("connection", (socket)=>{
       //   });
   });
 
-  socket.on('disconnect', function() {
-    println('웹소켓 연결이 종료되었습니다.');
-});
+  // socket.on('disconnect', function() {
+  //   console.log('웹소켓 연결이 종료되었습니다.');
+  // });
 });
 
     // const { MongoClient } = require("mongodb");
