@@ -32,9 +32,10 @@ function send() {
     chatContent: chatInput.value, 
     chatSpaceNo: chatSpaceNo.value, 
     nickname: nickname.value, 
-    userImage:userImage.value
+    userImage:userImage.value,
+    chatSpaceNo:chatSpaceNo.value
   };
-  socket.emit("chatting", param); //채널이름
+  socket.emit("message", param); //채널이름
 
   chatInput.value = "";
 }
@@ -48,7 +49,7 @@ closeSlideMenu.addEventListener("click", () => {
   slideMenu.classList.toggle('on');//슬라이드 메뉴 감춤
 });
 
-socket.on("chatting", (data)=>{ //여기 안에 서버에서 말한거 담김
+socket.on("message", (data)=>{ //여기 안에 서버에서 말한거 담김
   const {userId, chatContent, chatDate, nickname, userImage} = data;
   const item = new LiModel(userId, chatContent, chatDate, nickname, userImage);
   item.makeLi();
