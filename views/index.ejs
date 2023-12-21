@@ -25,16 +25,11 @@
   <link rel="stylesheet" href="static/ssh/css/style.css">
 
   <link rel="stylesheet" href="static/lcy/css/style.css">
-
-
-  <script>
-    console.log(data);
-  </script>
   <!-- [E]thwhole-wfLpW5Z3pJ -->
 </head>
 
 <body>
-    
+    <!-- <script src="bundle.js"></script> -->
 
     <div class="slideMenu" class="slide">
         <div class="closeSlideMenu">닫기</div>
@@ -101,16 +96,14 @@
         </table>
     </div>
 
-    <form name="form">
-        <div class="inputset inputset-line inputset-lg">
-            <button class="listStoreSearchButton inputset-icon icon-right icon-search btn"
-                    type="button" aria-label="아이콘"></button>
-            <input type="text" class="inputset-input form-control" name="searchKeyword"
-                    placeholder="채팅 내용을 입력해 주세요." aria-label="내용"
-                    value="${!empty search.searchKeyword ? search.searchKeyword:''}">
-        </div>
-        <input type="hidden" name="chatSpaceNo" class="chatSpaceNo" value="<%= data.chatSpace.chatSpaceNo %>">
-    </form>
+    <div class="inputset inputset-line inputset-lg">
+        <button class="searchButton inputset-icon icon-right icon-search btn"
+                type="button" aria-label="아이콘" id="searchButton"></button>
+        <input type="text" class="inputset-input form-control" name="searchKeyword"
+                placeholder="채팅 내용 또는 닉네임을 입력해 주세요." aria-label="내용"
+                value="<%= data.searchKeyword %>" id="searchKeyword">
+    </div>
+    <input type="hidden" name="chatSpaceNo" class="chatSpaceNo" value="<%= data.chatSpace.chatSpaceNo %>">
 
 
     <div class="display-container">
@@ -145,5 +138,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="static/lcy/js/chat.js"></script>
+  <!-- <script type="module" src="static/lcy/js/chat_require.js"></script> -->
 </body>
 </html>

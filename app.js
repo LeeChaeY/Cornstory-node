@@ -4,14 +4,13 @@ const app = express();
 const path = require("path");
 const socketIO = require("socket.io");
 const moment = require("moment");
-const mongoose = require('mongoose');
 
 const cors = require('cors');
 
 // Express의 미들웨어 불러오기
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const static = require('serve-static');
+// const static = require('serve-static');
 const errorHandler = require('errorhandler');
 
 // 에러 핸들러 모듈 사용
@@ -56,8 +55,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(__dirname, "src"))); // console.log(__dirname) // C:\Users\choi4\chat 가리킴
-// public 폴더를 static으로 오픈
-// app.use('/public', static(path.join(__dirname, 'public')));
 
 // cookie-parser 설정
 app.use(cookieParser());
@@ -132,75 +129,31 @@ const server = http.createServer(app);
 server.listen(PORT, ()=>console.log(`server is running ${PORT}`));
 const io = socketIO(server);
 
-
-// Define the Chat schema
-const chatSchema = new mongoose.Schema({
-  chatNo: { type: Number, required: true },
-  userId: { type: String, required: true },
-  chatContent: { type: String, required: true },
-  chatDate: { type: String, required: true },
-  nickname: { type: String, required: true },
-  userImage: { type: String, required: true },
-  chatSpaceNo: { type: Number, required: true },
-  chatImage: { type: String },
-});
-
-// Create the Chat model
-const Chat = mongoose.model('chat', chatSchema);
-
-const autoSequenceSchema = new mongoose.Schema({
-  seq: Number,
-});
-
-const AutoSequence = mongoose.model('auto_sequence', autoSequenceSchema);
-
-// Connect to MongoDB
-const connectDB = async () => {
-  try {
-    const dbURI = "mongodb://corn:corncorn*3@kbsco.pub-vpc.mg.naverncp.com:17017/corn?directConnection=true";
-    await mongoose.connect(dbURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB 연결 성공');
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-};
-
-// Retrieve all chats from the Chat collection
-const getAllChats = async () => {
-  try {
-    return await Chat.find({});
-  } catch (error) {
-    console.error('Error retrieving chats:', error.message);
-    throw error;
-  }
-};
+const {
+  connectDB,
+  listChatsByChatSpaceNo,
+  listChatsBySearchKeyword, 
+  getAutoSequence, 
+  insertChats,
+  deleteChatsByChatSpaceNo,
+  Chat,
+} = require('./src/database/database'); // 경로에 맞게 수정
 
 
-const deleteChatsByChatSpaceNo = async (chatSpaceNo) => {
-  try {
-    return await Chat.deleteMany({chatSpaceNo:chatSpaceNo});
-  } catch (error) {
-    console.error('Error retrieving chats:', error.message);
-    throw error;
-  }
-};
-
-let data;
-app.post('/receive-post', async (req, res) => {
+let chatSpaceNo2;
+app.post('/', async (req, res) => {
   try {
     await connectDB();
-    const chats = await getAllChats();
+    chatSpaceNo2 = JSON.parse(req.body.chatSpace).chatSpaceNo;
+    const chats = await listChatsByChatSpaceNo(chatSpaceNo2);
     
-    data = {
+    const data = {
       chatSpace: JSON.parse(req.body.chatSpace),
       list: chats,
       userList: JSON.parse(req.body.userList),
       totalCount: JSON.parse(req.body.totalCount),
       user: JSON.parse(req.body.user),
+      searchKeyword: ""
     };
 
     // Log the user data
@@ -217,7 +170,7 @@ app.post('/receive-post', async (req, res) => {
 
   // 응답 메시지 전송 메소드
   function sendResponse(socket, command, code, message) {
-    var statusObj = {command: command, code: code, message: message};
+    const statusObj = {command: command, code: code, message: message};
     socket.emit('response', statusObj);
   }
 
@@ -228,65 +181,57 @@ app.post('/receive-post', async (req, res) => {
     socket.remoteAddress = socket.request.connection._peername.address;
     socket.remotePort = socket.request.connection._peername.port;
     
-    socket.join(data.chatSpace.chatSpaceNo);
+    socket.join(chatSpaceNo2);
     console.log(io.sockets.adapter.rooms);
 
-
     socket.on("message", async (data) => {
-      let chatNo;
       try {
-        // Execute the query and wait for the result
-        const result = await AutoSequence.findOneAndUpdate({}, { $inc: { seq: 1 } }, { new: true, upsert: true });
+        const chatNo = await getAutoSequence();
+        console.log("chatNo: " + chatNo);
     
-        // Check if the result exists before accessing its properties
-        if (result) {
-          chatNo = result.seq;
-          console.log("chatNo: " + chatNo);
-        } else {
-          console.log("AutoSequence document not found.");
-        }
-      } catch (error) {
-        console.error('Error getting next sequence:', error.message);
-      }
+        const { userId, chatContent, nickname, userImage, chatSpaceNo } = data;
     
-      // Rest of your code
-      console.dir(data);
-      const { userId, chatContent, nickname, userImage, chatSpaceNo } = data;
-      let message = {
-        chatNo: parseInt(chatNo),
-        userId: userId,
-        chatContent: chatContent,
-        chatDate: moment(new Date()).format("yyyy-MM-DD HH:mm"),
-        nickname: nickname,
-        userImage: userImage,
-        chatSpaceNo: parseInt(chatSpaceNo)
-      };
-      console.log("message: " + message);
+        const message = {
+          chatNo: parseInt(chatNo),
+          userId: userId,
+          chatContent: chatContent,
+          chatDate: moment(new Date()).format("YYYY-MM-DD HH:mm"), // Fix the date format
+          nickname: nickname,
+          userImage: userImage,
+          chatSpaceNo: parseInt(chatSpaceNo),
+        };
     
-      let newChat = new Chat(message);
-      console.log("newChat: " + newChat);
+        console.log("message: ", message);
     
-      const insertChats = async () => {
-        try {
-          await newChat.save();
-        } catch (error) {
-          console.error('Error saving chat:', error.message);
-        }
-      };
+        const newChat = new Chat(message);
     
-      // Use await to ensure the newChat is saved before moving forward
-      await insertChats();
+        console.log("newChat: ", newChat);
     
-      // Rest of your code
-      try {
+        // Use await to ensure the newChat is saved before moving forward
+        await insertChats(newChat); // Pass the newChat object to insertChats function
+    
         io.sockets.in(parseInt(chatSpaceNo)).emit('message', message);
-      } catch (error) {
-        console.error('Error emitting message:', error.message);
-      }
     
-      // 응답 메시지 전송
-      sendResponse(socket, 'message', '200', '방 [' + chatSpaceNo + ']의 모든 사용자들에게 메시지를 전송했습니다.');
+        // 응답 메시지 전송
+        sendResponse(socket, 'message', '200', '방 [' + chatSpaceNo + ']의 모든 사용자들에게 메시지를 전송했습니다.');
+      } catch (error) {
+        console.error('Error processing message:', error.message);
+        // Handle the error or log it appropriately
+      }
     });
+
+    socket.on("search", async (data) => {
+      try {
+        console.log("data : "+data.chatSpaceNo+", "+data.searchKeyword);
+        const chats = await listChatsBySearchKeyword(parseInt(data.chatSpaceNo), data.searchKeyword+"");
+        // console.log("chats : "+chats);
+        socket.emit('search', chats);
+      } catch (error) {
+        console.error('Error processing message:', error.message);
+        // Handle the error or log it appropriately
+      }
+    });
+    
 
   // socket.on('disconnect', function() {
   //   console.log('웹소켓 연결이 종료되었습니다.');
@@ -297,6 +242,24 @@ app.post('/receive-post', async (req, res) => {
 
 
 
-// app.get('/delete_chats', async (req, res) => {
-//   req.get()
-// });
+app.get('/delete_chats', async (req, res) => {
+    try {
+    const chatSpaceNo3 = req.get("chatSpaceNo");
+
+    // Ensure chatSpaceNo is a valid number
+    if (isNaN(chatSpaceNo3)) {
+      return res.status(400).json({ error: 'Invalid chatSpaceNo' });
+    }
+
+    // Use await to wait for the delete operation to complete
+    await deleteChatsByChatSpaceNo(parseInt(chatSpaceNo3));
+
+    // Send a success response
+    res.status(200).json({ message: 'Chats deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting chats:', error.message);
+
+    // Send an error response
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
