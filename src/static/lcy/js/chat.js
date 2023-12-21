@@ -17,6 +17,7 @@ const userImage = document.querySelector("#userImage");
 
 const searchButton = document.querySelector("#searchButton");
 const searchKeyword = document.querySelector("#searchKeyword");
+const startDate = document.querySelector(".startDate");
 
 displayContainer.scrollTo(0, displayContainer.scrollHeight);
 
@@ -44,7 +45,8 @@ function search() {
 
   const param = {
     chatSpaceNo:chatSpaceNo.value,
-    searchKeyword:searchKeyword.value
+    searchKeyword:searchKeyword.value, 
+    startDate: startDate.value, 
   };
   console.log("param : "+param.chatSpaceNo+", "+param.searchKeyword);
   socket.emit("search", param); //채널이름
@@ -82,6 +84,7 @@ slideOpen.addEventListener("click", () => {
 closeSlideMenu.addEventListener("click", () => {
   slideMenu.classList.toggle('on');//슬라이드 메뉴 감춤
 });
+
 
 socket.on("message", (data)=>{ //여기 안에 서버에서 말한거 담김
   const {userId, chatContent, chatDate, nickname, userImage} = data;

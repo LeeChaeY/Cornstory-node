@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
+
 
 // Define the Chat schema
 const chatSchema = new mongoose.Schema({
@@ -39,7 +41,10 @@ const connectDB = async () => {
 // Retrieve all chats from the Chat collection
 const listChatsByChatSpaceNo = async (chatSpaceNo) => {
   try {
-    return await Chat.find({chatSpaceNo:chatSpaceNo});
+    return await Chat.find({
+      chatSpaceNo: chatSpaceNo,
+      // chatDate: { $gt: moment(chatEnterDate, 'YYYY-MM-DD HH:mm').toDate()} 
+    });
   } catch (error) {
     console.error('Error retrieving chats:', error.message);
     throw error;
@@ -51,6 +56,7 @@ const listChatsBySearchKeyword = async (chatSpaceNo, searchKeyword) => {
   try {
     return await Chat.find({
       chatSpaceNo: chatSpaceNo, 
+      // chatDate: { $gt: moment(chatEnterDate, 'YYYY-MM-DD HH:mm').toDate()}, 
       $or: [
       { nickname: regexSearch },
       { chatContent: regexSearch }
