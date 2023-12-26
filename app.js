@@ -135,13 +135,13 @@ const io = socketIO(server, {
 let chatSpaceNo2;
 app.post('/', async (req, res) => {
   try {
-    app.use((req, res, next) => {
-      res.header('Access-Control-Allow-Origin', 'http://101.79.8.55:3000');
-      res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-      next();
-    });
-    
+    // app.use((req, res, next) => {
+    //   res.header('Access-Control-Allow-Origin', 'http://101.79.8.55:3000');
+    //   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    //   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    //   next();
+    // });
+
     await connectDB();
     chatSpaceNo2 = JSON.parse(req.body.chatSpace).chatSpaceNo;
     console.log("dddd"+JSON.parse(req.body.startDate));
