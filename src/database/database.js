@@ -39,11 +39,11 @@ const connectDB = async () => {
 };
 
 // Retrieve all chats from the Chat collection
-const listChatsByChatSpaceNo = async (chatSpaceNo) => {
+const listChatsByChatSpaceNo = async (chatSpaceNo, chatEnterDate) => {
   try {
     return await Chat.find({
       chatSpaceNo: chatSpaceNo,
-      // chatDate: { $gt: moment(chatEnterDate, 'YYYY-MM-DD HH:mm').toDate()} 
+      chatDate: { $gt: chatEnterDate}
     });
   } catch (error) {
     console.error('Error retrieving chats:', error.message);
@@ -51,12 +51,12 @@ const listChatsByChatSpaceNo = async (chatSpaceNo) => {
   }
 };
 
-const listChatsBySearchKeyword = async (chatSpaceNo, searchKeyword) => {
+const listChatsBySearchKeyword = async (chatSpaceNo, searchKeyword, chatEnterDate) => {
   const regexSearch = new RegExp(searchKeyword, 'i');
   try {
     return await Chat.find({
       chatSpaceNo: chatSpaceNo, 
-      // chatDate: { $gt: moment(chatEnterDate, 'YYYY-MM-DD HH:mm').toDate()}, 
+      chatDate: { $gt: chatEnterDate},
       $or: [
       { nickname: regexSearch },
       { chatContent: regexSearch }

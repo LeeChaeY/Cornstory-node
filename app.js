@@ -137,9 +137,10 @@ app.post('/', async (req, res) => {
   try {
     await connectDB();
     chatSpaceNo2 = JSON.parse(req.body.chatSpace).chatSpaceNo;
+    console.log("dddd"+JSON.parse(req.body.startDate));
     const chats = await listChatsByChatSpaceNo(
       chatSpaceNo2, 
-      // JSON.parse(req.body.startDate)
+      JSON.parse(req.body.startDate)
       );
     
     const data = {
@@ -154,6 +155,7 @@ app.post('/', async (req, res) => {
 
     // Log the user data
     console.log(data.user);
+    console.log(data.startDate);
 
     // Render the view with the data
     res.render('index', { data });
@@ -170,7 +172,14 @@ io.sockets.on("connection", (socket) => {
   console.log("한명의 유저가 접속을 했습니다.");
 
   if (chatSpaceNo2 != null) {
-    socket.join(chatSpaceNo2);
+    socket.join(chatSpaceNo2, (err) => {
+      if (err) {
+        console.error(`Error joining room ${chatSpaceNo2}: ${err.message}`);
+      } else {
+        console.log(`Socket ${socket.id} joined room ${chatSpaceNo2}`);
+
+      }
+    });
     console.log(io.sockets.adapter.rooms);
   }
   // console.log("connection info : ", socket.request.connection._peername);
@@ -183,6 +192,8 @@ io.sockets.on("connection", (socket) => {
   socket.on("connection", async (data) => {
     socket.join(data.userId);
     console.log(io.sockets.adapter.rooms);
+
+    // socket.emit("enter", );
   });
 
   socket.on("message", async (data) => {
@@ -229,11 +240,11 @@ io.sockets.on("connection", (socket) => {
 
   socket.on("search", async (data) => {
     try {
-      console.log("data : " + data.chatSpaceNo + ", " + data.searchKeyword);
+      console.log("data : " + data.chatSpaceNo + ", " + data.searchKeyword+", "+data.startDate);
       const chats = await listChatsBySearchKeyword(
         parseInt(data.chatSpaceNo),
         data.searchKeyword + "", 
-        // data.startDate
+        data.startDate
       );
       // console.log("chats : "+chats);
       socket.emit("search", chats);
@@ -241,6 +252,10 @@ io.sockets.on("connection", (socket) => {
       console.error("Error processing message:", error.message);
       // Handle the error or log it appropriately
     }
+  });
+
+  socket.on("listChatSpace", (data) => {
+    console.log("웹소켓 연결이 종료되었습니다.");
   });
 
   socket.on("disconnect", (data) => {
@@ -260,6 +275,17 @@ io.sockets.on("connection", (socket) => {
 
       // Send a success response
       res.status(200).json({ message: "Chats deleted successfully" });
+
+      // 특정 소켓 ID를 가지는 소켓 찾기
+      const targetSocket = io.sockets.sockets[data.chatSpaceNo];
+
+      if (targetSocket) {
+        // 해당 소켓 삭제
+        targetSocket.destroy();
+      } else {
+        console.log('Socket not found.');
+      }
+
     } catch (error) {
       console.error("Error deleting chats:", error.message);
 
@@ -274,6 +300,21 @@ io.sockets.on("connection", (socket) => {
   //     database.db.close();
   //   }
   // });
+
+  socket.on("close", async (data) => {
+    console.log(`Disconnecting user, ID: ${data.socketId}`);
+    
+    // 특정 소켓 ID를 가지는 소켓 찾기
+    const targetSocket = io.sockets.sockets[data.socketId];
+
+    if (targetSocket) {
+      // 해당 소켓 삭제
+      targetSocket.disconnect(true);
+    } else {
+      console.log('Socket not found.');
+    }
+  });
+
 
 
 });
