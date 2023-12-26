@@ -62,15 +62,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://101.79.8.55:3000');
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-  next();
-});
-
 //라우팅 정보를 읽어들여 라우팅 설정
 // const router = express.Router();
 // route_loader.init(app, router);
@@ -144,6 +135,13 @@ const io = socketIO(server, {
 let chatSpaceNo2;
 app.post('/', async (req, res) => {
   try {
+    app.use((req, res, next) => {
+      res.header('Access-Control-Allow-Origin', 'http://101.79.8.55:3000');
+      res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+      next();
+    });
+    
     await connectDB();
     chatSpaceNo2 = JSON.parse(req.body.chatSpace).chatSpaceNo;
     console.log("dddd"+JSON.parse(req.body.startDate));
