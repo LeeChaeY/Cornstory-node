@@ -49,7 +49,7 @@
                 <% for (let i = 0; i < data.userList.length; i++) { %>
                   <tr>
                       <td><%=i+1%></td>
-                      <td><img src="static/file/chat/<%= data.chatSpace.userImage %>"></td>
+                      <td><img src="http://localhost:8088/file/chat/<%= data.chatSpace.userImage %>"></td>
                       <td>
                           <%= data.userList[i].nickname %>
                           <% if(i == 0) { %>
@@ -71,13 +71,13 @@
         <table class="tableset-table table">
             <tr>
                 <td>
-                    <img name="cSpaceImage" class="cSpaceImage" src="static/file/chat//<%= data.chatSpace.cSpaceImage %>">
+                    <img name="cSpaceImage" class="cSpaceImage" src="http://localhost:8088/file/chat/<%= data.chatSpace.cSpaceImage %>">
                 </td>
                 <td>
                     <%= data.chatSpace.cSpaceName %>
                 </td>
                 <td>
-                    <img name="userImage" class="userImage" src="static/file/chat//<%= data.chatSpace.userImage %>">
+                    <img name="userImage" class="userImage" src="http://localhost:8088/file/chat/<%= data.chatSpace.userImage %>">
                     <%= data.chatSpace.nickname %>
                 </td>
                 <td>
@@ -116,7 +116,7 @@
                 <input type="hidden" name="nickname" value="<%= data.list[j].nickname %>">
                 <span class="profile">
                     <span class="user"><%= data.list[j].nickname %></span>
-                    <img name="userImage" class="userImage" src="static/file/chat/<%= data.list[j].userImage %>">
+                    <img name="userImage" class="userImage" src="http://localhost:8088/file/chat/<%= data.list[j].userImage %>">
                 </span>
                 <span class="chatContent"><%= data.list[j].chatContent %></span>
                 <span class="chatDate"><%= data.list[j].chatDate %></span>
