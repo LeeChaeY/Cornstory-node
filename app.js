@@ -177,11 +177,6 @@ app.post('/', async (req, res) => {
   }
 });
 
-app.get('/', function(req, res) {
-  console.log("get!!");
-});
-
-
 io.sockets.on("connection", (socket) => {
   console.log("한명의 유저가 접속을 했습니다.");
 
