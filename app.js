@@ -190,6 +190,10 @@ io.sockets.on("connection", (socket) => {
     });
     console.log(io.sockets.adapter.rooms);
   }
+
+  socket.on('error', (err) => {
+    console.error('Socket error:', err);
+  });
   // console.log("connection info : ", socket.request.connection._peername);
 
   // 소켓 객체에 클라이언트 Host, Port 정보 속성으로 추가
