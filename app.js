@@ -114,6 +114,8 @@ const {
   Chat,
 } = require("./src/database/database"); // 경로에 맞게 수정
 
+
+
 // 응답 메시지 전송 메소드
 function sendResponse(socket, command, code, message) {
   const statusObj = { command: command, code: code, message: message };
