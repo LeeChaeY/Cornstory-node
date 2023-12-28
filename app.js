@@ -124,13 +124,14 @@ const socketIO = require("socket.io");
 const server = http.createServer(app);
 server.listen(PORT, () => console.log(`server is running ${PORT}`));
 
-// // In your Node.js server
-// const io = socketIO(server, {
-//   cors: {
-//     origin: ["http://localhost:8088"], // Add your allowed origins
-//     methods: ["GET", "POST"],
-//   },
-// });
+// In your Node.js server
+const io = socketIO(server, {
+  // cors: {
+  //   origin: ["http://localhost:8088"], // Add your allowed origins
+  //   methods: ["GET", "POST"],
+  // },
+});
+
 
 let chatSpaceNo2;
 app.post('/', async (req, res) => {
