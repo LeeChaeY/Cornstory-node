@@ -1,35 +1,12 @@
 #!/bin/sh
-
-# Set environment variables
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-# SSH into the remote server
-ssh -o StrictHostKeyChecking=no cornstory@101.79.8.55 <<EOF
-    set -e  # Exit on error
-
-    # Change to the project directory
+ssh cornstory@223.130.133.132 <<EOF
     cd ~/Cornstory-node
-
-    # Update code from the Git repository
     git pull origin master
-
-    # Install NVM if not already installed
-    if [ ! -s "$NVM_DIR/nvm.sh" ]; then
-        curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-        . "$NVM_DIR/nvm.sh"
-    fi
-
-    # Install the specified Node.js version
-    nvm install 17.9.1
-
-    # Install dependencies
-    npm install
-
-    # Install PM2 globally
+    curl -o-   https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh    | bash
+    . ~/.nvm/nvm.sh 
+    nvm install 17.9.1 
+    npm install 
     npm install -g pm2
-
-    # Restart the application using PM2
     pm2 restart ecosystem.config.js
-
+    exit
 EOF
