@@ -32,7 +32,8 @@ app.set("view engine", "ejs");
 // Set the views directory
 app.set("views", path.join(__dirname, "views"));
 
-app.use(cors()); // 모든 도메인에서의 요청을 허용합니다.
+// app.use(cors()); // 모든 도메인에서의 요청을 허용합니다.
+app.use(cors({ origin: 'http://localhost:8088' }));
 
 const PORT = process.env.PORT || 3000;
 app.set("port", PORT);
