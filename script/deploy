@@ -1,5 +1,5 @@
 #!/bin/sh
-ssh -i root@223.130.133.132 <<EOF
+ssh root@223.130.133.132 <<EOF
 	export BUILD_ID=dontKillMe
     
     cd ~/Cornstory-node
