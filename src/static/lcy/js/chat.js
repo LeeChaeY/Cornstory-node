@@ -107,7 +107,7 @@ function LiModel(userId, chatContent, chatDate, nickname, userImage) {
     li.classList.add(sessionUserId.value === this.userId ? "sent":"received");
     const dom = `<span class="profile">
                 <span class="user">${this.nickname}</span>
-                <img name="userImage" class="userImage" src="static/file/chat${this.userImage}"></span>
+                <img name="userImage" class="userImage" src="${this.userImage}"></span>
                 <span class="chatContent">${this.chatContent}</span>
                 <span class="chatDate">${this.chatDate}</span>`;
     li.innerHTML = dom;
