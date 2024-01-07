@@ -49,7 +49,7 @@
                 <% for (let i = 0; i < data.userList.length; i++) { %>
                   <tr>
                       <td><%=i+1%></td>
-                      <td><img src="<%= data.chatSpace.userImage %>"></td>
+                      <td><img name="userImage" class="userImage" src="${chats[i].userImage}"></td>
                       <td>
                           <%= data.userList[i].nickname %>
                           <% if(i == 0) { %>
@@ -70,23 +70,23 @@
     <div class="user-container">
         <table class="tableset-table table">
             <tr>
-                <td>
+                <td width="150">
                     <img name="cSpaceImage" class="cSpaceImage" src="<%= data.chatSpace.cSpaceImage %>">
                 </td>
-                <td>
+                <td width="200">
                     <%= data.chatSpace.cSpaceName %>
                 </td>
-                <td>
+                <td width="150">
                     <img name="userImage" class="userImage" src="<%= data.chatSpace.userImage %>">
                     <%= data.chatSpace.nickname %>
                 </td>
-                <td>
+                <td width="100">
                     <%= data.chatSpace.genre %>
                 </td>
-                <td>
+                <td width="100">
                     <%= data.chatSpace.cSpaceUserCnt %>
                 </td>
-                <td>
+                <td width="150">
                     <%= data.chatSpace.cSpaceDate %>
                 </td>
                 <td>

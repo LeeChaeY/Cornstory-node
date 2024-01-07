@@ -132,7 +132,7 @@ function searchLiModel(chats) {
                   <input type="hidden" name="nickname" value="${chats[i].nickname}">
                   <span class="profile">
                       <span class="user">${chats[i].nickname}</span>
-                      <img name="userImage" class="userImage" src="static/file/chat/${chats[i].userImage}">
+                      <img name="userImage" class="userImage" src="${chats[i].userImage}">
                   </span>
                   <span class="chatContent">${chats[i].chatContent}</span>
                   <span class="chatDate">${chats[i].chatDate}</span>`;
